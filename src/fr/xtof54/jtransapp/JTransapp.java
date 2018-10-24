@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.view.View.OnTouchListener;
 import android.view.MotionEvent;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
@@ -82,6 +83,16 @@ public class JTransapp extends Activity {
 		mike.resetAudioSource();
 		List frames = MFCC.getMFCC(mike);
 		System.out.println("detjtrapp "+frames.size());
+		Grammatiseur gram = Grammatiseur.getGrammatiseur();
+		String g = gram.getGrammar("Tjikolmed aujourd'hui 10530");
+		System.out.println("detjtrapp phonetisation "+g);
+	}
+	public static void alert(final String s) {
+		main.runOnUiThread(new Runnable() {
+		    public void run() {
+			Toast.makeText(main, s, Toast.LENGTH_LONG).show();
+		    }
+		});
 	}
 
 	public void refreshText() {

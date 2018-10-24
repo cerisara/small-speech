@@ -1,0 +1,61 @@
+0 = [ zéro ]
+1 = [ ( un | une | dix | cent | mille | onze ) ]
+2 = ( deux | vingt | douze )
+3 = ( trois | treize | trente )
+4 = ( quatre | quatorze | quarante )
+5 = ( cinq | quinze | cinquante )
+6 = ( six | seize | soixante )
+7 = ( sept | soixante [ dix ] )
+8 = ( huit | quatre vingt )
+9 = ( neuf | quatre vingt dix | quatre vingt )
+
+%% x peut être remplacé par un digit quelconque
+xxx = x [ cent ] x x
+xxxx = x [ mille ] x [ cent ] x x
+x xxx = x [ mille ] x [ cent ] x x
+x,xxx = ( x [ mille ] x [ cent ] x x | x virgule x [ cent ] x x )
+xxxxx = x x [ mille ] x [ cent ] x x
+xx xxx = x x [ mille ] x [ cent ] x x
+xx,xxx = ( x x [ mille ] x [ cent ] x x | x x virgule x [ cent ] x x )
+xxxxxx = x [ cent ] x x [ mille ] x [ cent ] x x
+xxx xxx = x [ cent ] x x [ mille ] x [ cent ] x x
+xxx,xxx = ( x [ cent ] x x [ mille ] x [ cent ] x x | x [ cent ] x x virgule x [ cent ] x x )
+xxxxxxx = x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+x xxx xxx = x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+x,xxx,xxx = x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+xxxxxxxx = x x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+xx xxx xxx = x x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+xx,xxx,xxx = x x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+xxx xxx xxx = x [ cent ] x x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+xxx,xxx,xxx = x [ cent ] x x [ million ] x [ cent ] x x [ mille ] x [ cent ] x x
+xx xx = x x x x
+xx.xx.xx.xx.xx = x x x x x x x x x x
+
+- = [ moins ]
+* = [ ( fois | multiplié par ) ]
+/ = [ ( sur | divisé par ) ]
+, = [ virgule ]
+. = ( virgule | point )
+& = [ ( e | E n d ) ]
+
+h30 = ( heure trente | heure et trente minutes | heure et demi )
+H30 = ( heure trente | heure et trente minutes | heure et demi )
+h15 = ( heure quinze | heure et quinze minutes | heure et quart )
+H15 = ( heure quinze | heure et quinze minutes | heure et quart )
+12h00 = ( midi | douze heure )
+0h00 = ( minuit  | zéro heure )
+
+kg = ( kilo | kilogramme )
+Kg = ( kilo | kilogramme )
+KG = ( kilo | kilogramme )
+
+km/h = ( kilomètre heure | kilomètre par heure )
+Km/h = ( kilomètre heure | kilomètre par heure )
+
+% = pourcent
+°C = degré celsius
+°F = degré fahrenheit
+°K = degré kelvin
+° = degré
+@ = à
+
