@@ -62,6 +62,7 @@ public class FileUtils {
 				// Allow cancellation
 				Thread.sleep(0);
 			}
+			if (goeson) System.out.println("detjtrapp fini download ok");
 			if (progress!=null) progress.setProgressDone();
 			goeson=true;
 		} catch (Exception e) {

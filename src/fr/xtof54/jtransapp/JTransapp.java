@@ -151,16 +151,18 @@ public class JTransapp extends Activity {
 			}
 		}
 		public void setProgressDone() {
+			System.out.println("detjtrapp call to setprogressdone");
 			try {
 				runOnUiThread(new Runnable() {
 					public void run() {
-						if (progdialog!=null) progdialog.cancel();
+						if (progdialog!=null) {
+							progdialog.cancel();
+							progdialog=null;
+						}
 					}
 				});
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
-				progdialog=null;
 			}
 		}
 	}
