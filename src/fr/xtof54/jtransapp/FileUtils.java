@@ -8,12 +8,34 @@ import java.io.Closeable;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.fuin.utils4j.Utils4J;
+
 public class FileUtils {
 	public static boolean goeson = true;
+
+	public static void unzipFile(final String zipfile, final String outdir, final ProgressDisplay progress) {
+		Thread unzipper = new Thread(new Runnable() {
+			public void run() {
+			}
+		});
+		unzipper.start();
+	}
+
 	public static void downloadFile(final String surl, final File target, final ProgressDisplay progress) {
 		Thread downloader = new Thread(new Runnable() {
 			public void run() {
 				downloadFile0(surl,target,progress);
+				String zipf = target.getAbsolutePath();
+				if (zipf.endsWith(".zip")) {
+					if (progress!=null) progress.setProgress("Unzipping...",0.5f);
+					String outdir = zipf.substring(0,zipf.lastIndexOf('/'));
+					try {
+						Utils4J.unzip(target, new File(outdir));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if (progress!=null) progress.setProgressDone();
 			}
 		});
 		downloader.start();
@@ -63,7 +85,6 @@ public class FileUtils {
 				Thread.sleep(0);
 			}
 			if (goeson) System.out.println("detjtrapp fini download ok");
-			if (progress!=null) progress.setProgressDone();
 			goeson=true;
 		} catch (Exception e) {
 			e.printStackTrace();

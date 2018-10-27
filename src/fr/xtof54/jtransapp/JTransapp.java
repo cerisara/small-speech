@@ -128,6 +128,7 @@ public class JTransapp extends Activity {
 								FileUtils.goeson=false;
 							}
 						});
+						progdialog.setCanceledOnTouchOutside(false);
 						progdialog.setProgress(0);
 						progdialog.show();
 					}
