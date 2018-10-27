@@ -9,7 +9,16 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class FileUtils {
-	public static void downloadFile(String surl, File target, ProgressDisplay progress) {
+	public static boolean goeson = true;
+	public static void downloadFile(final String surl, final File target, final ProgressDisplay progress) {
+		Thread downloader = new Thread(new Runnable() {
+			public void run() {
+				downloadFile0(surl,target,progress);
+			}
+		});
+		downloader.start();
+	}
+	public static void downloadFile0(String surl, File target, ProgressDisplay progress) {
 		InputStream in = null;
 		FileOutputStream os = null;
 		try {
@@ -29,8 +38,9 @@ public class FileUtils {
 
 			in = con.getInputStream();
 			os = new FileOutputStream(target);
-
-			while ((read = in.read(buf)) > 0) {
+			
+			goeson=true;
+			while ((read = in.read(buf)) > 0 && goeson) {
 				os.write(buf, 0, read);
 				downloadedLen += read;
 
@@ -52,6 +62,8 @@ public class FileUtils {
 				// Allow cancellation
 				Thread.sleep(0);
 			}
+			if (progress!=null) progress.setProgressDone();
+			goeson=true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

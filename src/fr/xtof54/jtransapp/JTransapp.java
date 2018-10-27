@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.graphics.Color;
 import android.widget.Toast;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
 import java.io.File;
@@ -112,6 +113,58 @@ public class JTransapp extends Activity {
 		}
 	}
 
+	private ProgressDialog progdialog=null;
+	public class ProgressWin implements ProgressDisplay {
+		public ProgressWin() {
+			try {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						progdialog = new ProgressDialog(main);
+						progdialog.setMessage("Loading speech models. Please wait...");
+						progdialog.setIndeterminate(false);
+						progdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+						progdialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){
+							public void onClick(DialogInterface dialog, int whichButton){
+								FileUtils.goeson=false;
+							}
+						});
+						progdialog.setProgress(0);
+						progdialog.show();
+					}
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		public void setIndeterminateProgress(String message) {
+		}
+		public void setProgress(String message, final float f) {
+			try {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						int p = (int)(f*100.);
+						if (progdialog!=null) progdialog.setProgress(p);
+					}
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		public void setProgressDone() {
+			try {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (progdialog!=null) progdialog.cancel();
+					}
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				progdialog=null;
+			}
+		}
+	}
+
 	private void checkAcmod() {
 		if (fdir==null) {
 			System.out.println("detjtrapp cannot check acmod - no fdir");
@@ -129,7 +182,7 @@ public class JTransapp extends Activity {
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						System.out.println("detjtrapp trying to download acmod");
-						FileUtils.downloadFile("https://members.loria.fr/CCerisara/jtrans/acmod.zip",new File(fdir+"/acmod.zip"),null);
+						FileUtils.downloadFile("https://members.loria.fr/CCerisara/jtrans/acmod.zip",new File(fdir+"/acmod.zip"),new ProgressWin());
 						dialog.cancel();
 					}
 				})
@@ -145,3 +198,5 @@ public class JTransapp extends Activity {
 
 	}
 }
+
+
