@@ -9,6 +9,8 @@ import android.view.View.OnTouchListener;
 import android.view.MotionEvent;
 import android.graphics.Color;
 import android.widget.Toast;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import java.io.File;
 import java.util.List;
@@ -49,6 +51,8 @@ public class JTransapp extends Activity {
 			}
 		});
 		refreshText();
+
+		checkAcmod();
 	}
 
 	public void mikeEnded() {
@@ -106,5 +110,38 @@ public class JTransapp extends Activity {
 				}
 			}
 		}
+	}
+
+	private void checkAcmod() {
+		if (fdir==null) {
+			System.out.println("detjtrapp cannot check acmod - no fdir");
+			return;
+		}
+		File f = new File(fdir+"/acmod");
+		if (f.exists())
+			System.out.println("detjtrapp found acmod");
+		else {
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(main);
+			builder.setTitle("Downloader");
+			builder.setMessage("I need to download speech models (60 MB)...")
+				.setCancelable(false)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						System.out.println("detjtrapp trying to download acmod");
+						FileUtils.downloadFile("https://members.loria.fr/CCerisara/jtrans/acmod.zip",new File(fdir+"/acmod.zip"),null);
+						dialog.cancel();
+					}
+				})
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alertDialog = builder.create();
+			alertDialog.show();
+
+		}
+
 	}
 }

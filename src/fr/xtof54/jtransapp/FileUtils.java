@@ -9,24 +9,24 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class FileUtils {
-	public static void downloadFile(URL url, File target, ProgressDisplay progress) throws IOException, InterruptedException {
-		URLConnection con = url.openConnection();
-		con.connect();
-
-		long len = con.getContentLength();
-		long downloadedLen = 0;
-
-		byte[] buf = new byte[8192];
-		int read;
-
+	public static void downloadFile(String surl, File target, ProgressDisplay progress) {
 		InputStream in = null;
 		FileOutputStream os = null;
-
-		long lastSpeedUpdate = System.currentTimeMillis();
-		long accumBytes = 0;
-		int bps = 0;
-
 		try {
+			URL url = new URL(surl);
+			URLConnection con = url.openConnection();
+			con.connect();
+
+			long len = con.getContentLength();
+			long downloadedLen = 0;
+
+			byte[] buf = new byte[8192];
+			int read;
+
+			long lastSpeedUpdate = System.currentTimeMillis();
+			long accumBytes = 0;
+			int bps = 0;
+
 			in = con.getInputStream();
 			os = new FileOutputStream(target);
 
@@ -45,13 +45,15 @@ public class FileUtils {
 					accumBytes += read;
 				}
 
-				progress.setProgress(
+				if (progress!=null) progress.setProgress(
 						String.format("Downloading " + url + "... (%d KB/s)", bps/1024),
 						(float)downloadedLen/(float)len);
 
 				// Allow cancellation
 				Thread.sleep(0);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			closeQuietly(os);
 			closeQuietly(in);
