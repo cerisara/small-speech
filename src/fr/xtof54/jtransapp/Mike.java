@@ -19,10 +19,13 @@ import android.media.MediaRecorder;
 import android.media.MediaPlayer;
 import android.media.MediaExtractor;
 
+/**
+ * Also takes care of saving raw audio files
+ */
 public class Mike extends InputStream {
 	private AudioRecord ar = null;
 	private int minSize;
-	private ArrayList<Short> buf = null;
+	private ByteBuffer buf = null;
 	private int curinbuf=0, maxinbuf=0;
 	// private MediaRecorder mrec=null;
 	private long startRecordTime = 0;
@@ -51,7 +54,7 @@ public class Mike extends InputStream {
 				}
 				record.startRecording();
 				try {
-					System.out.println("detjtrapp start recording "+wav.length);
+					System.out.println("detjtrapp start recording bufsize= "+wav.length);
 					startRecordTime = Calendar.getInstance().getTimeInMillis();
 					String PATH_NAME = JTransapp.main.fdir.getAbsolutePath()+"/recwav_"+startRecordTime+".raw";
 					FileChannel fout = new FileOutputStream(PATH_NAME).getChannel();
@@ -74,7 +77,7 @@ public class Mike extends InputStream {
 					}
 					record.stop();
 					record.release();
-					System.out.println("detjtrapp stopped recording "+shortsRead);
+					System.out.println("detjtrapp stopped recording nread= "+shortsRead);
 					fout.close();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -192,21 +195,27 @@ public class Mike extends InputStream {
 			java.util.Arrays.sort(fss);
 			if (fss.length==0) return -1;
 			String PATH_NAME=fss[fss.length-1];
-			buf = new ArrayList<Short>();
+			ArrayList<Short> sbuf = new ArrayList<Short>();
 			DataInputStream fin = null;
 			try {
 				fin = new DataInputStream(new FileInputStream(PATH_NAME));
-				for (;;) buf.add(fin.readShort());
+				for (;;) sbuf.add(fin.readShort());
 			} catch (Exception e) {}
 			try {
 				if (fin!=null) fin.close();
 			} catch (Exception e) {}
-			if (buf==null) return -1;
-			System.out.println("detjtrapp readaudio "+buf.size()+" "+PATH_NAME);
+
+			// convert into a ShortBuffer and then a ByteBuffer, because the InputStream must output bytes
+			buf = ByteBuffer.allocate(sbuf.size()*2).order(ByteOrder.LITTLE_ENDIAN);
+			ShortBuffer shbuf = buf.asShortBuffer();
+			for (Short s: sbuf) shbuf.put(s);
+			shbuf.clear(); // does not erase data !
 			curinbuf=0;
 		}
-		if (curinbuf>=buf.size()) return -1;
-		return buf.get(curinbuf++);
+		if (curinbuf>=buf.capacity()) return -1;
+		// this is to return an unsigned byte:
+		int b = (int)buf.get(curinbuf++) & 0xff;
+		return b;
 	}
 
 }

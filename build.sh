@@ -8,9 +8,11 @@ export ANDJAR=/usr/lib/android-sdk/platforms/android-23/android.jar
 
 rm -rf out
 mkdir gen out
-cp res/drawable-xxhdpi/jtr.png res/drawable-xhdpi
-cp res/drawable-xxhdpi/jtr.png res/drawable-hdpi
-cp res/drawable-xxhdpi/jtr.png res/drawable-mdpi
+
+# should be run only once
+#cp res/drawable-xxhdpi/jtr.png res/drawable-xhdpi
+#cp res/drawable-xxhdpi/jtr.png res/drawable-hdpi
+#cp res/drawable-xxhdpi/jtr.png res/drawable-mdpi
 
 $ANDBIN/aapt package -f -M AndroidManifest.xml -I $ANDJAR -S res/ -J gen/ -m
 

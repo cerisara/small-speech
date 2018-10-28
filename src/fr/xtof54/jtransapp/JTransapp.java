@@ -87,10 +87,14 @@ public class JTransapp extends Activity {
 	public void mfcc(View v) {
 		mike.resetAudioSource();
 		List frames = MFCC.getMFCC(mike);
-		System.out.println("detjtrapp "+frames.size());
+		System.out.println("detjtrapp MFCC nframes= "+frames.size());
+
+		// test grammatiseur
 		Grammatiseur gram = Grammatiseur.getGrammatiseur();
-		String g = gram.getGrammar("Tjikolmed aujourd'hui 10530");
+		String g = gram.getGrammar("moins douze plus vingt deux");
 		System.out.println("detjtrapp phonetisation "+g);
+
+		SpeechAlign.align(frames,"un deux trois");
 	}
 	public static void alert(final String s) {
 		main.runOnUiThread(new Runnable() {
