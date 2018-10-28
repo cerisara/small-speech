@@ -766,9 +766,8 @@ public class StateGraph {
 		assert startFrame >= 0;
 		assert endFrame >= 0;
 
-		int frameCount = 1 + endFrame - startFrame;
-
 		InboundTransitionBridge in = new InboundTransitionBridge();
+		System.out.println("detjtrapp in viterbi "+startFrame+" "+endFrame+" "+nNodes);
 
 		// Probability vectors
 		float[] vpf = new float[nNodes]; // vector for previous frame (read-only)

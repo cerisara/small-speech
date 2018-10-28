@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.List;
 
 public class JTransapp extends Activity {
@@ -74,7 +75,11 @@ public class JTransapp extends Activity {
 
 	public void clear(View v) {
 		if (fdir!=null) {
-			File[] fs = fdir.listFiles();
+			File[] fs = fdir.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String nom) {
+					return nom.startsWith("recwav_");
+				}	
+			});
 			for (File f: fs) {
 				if (f.isFile() && !f.delete()) System.out.println("detjtrapp cannot delete "+f.getAbsolutePath());
 			}
@@ -106,7 +111,11 @@ public class JTransapp extends Activity {
 
 	public void refreshText() {
 		if (fdir!=null) {
-			File[] fs = fdir.listFiles();
+			File[] fs = fdir.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String nom) {
+					return nom.startsWith("recwav_");
+				}	
+			});
 			if (fs!=null) {
 				String nfs = "n="+Integer.toString(fs.length);
 				if (txt!=null) {

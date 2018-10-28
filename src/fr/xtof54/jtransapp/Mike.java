@@ -195,6 +195,7 @@ public class Mike extends InputStream {
 			java.util.Arrays.sort(fss);
 			if (fss.length==0) return -1;
 			String PATH_NAME=fss[fss.length-1];
+			System.out.println("detjtrapp mike load rawfile "+PATH_NAME);
 			ArrayList<Short> sbuf = new ArrayList<Short>();
 			DataInputStream fin = null;
 			try {

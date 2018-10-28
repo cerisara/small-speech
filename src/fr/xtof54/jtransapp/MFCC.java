@@ -243,8 +243,7 @@ public class MFCC {
 		// AndroidMikeDataSource afds = new AndroidMikeDataSource(200);
 		// afds.setMikeStream(audio);
 		
-		// default to 16kHz 16bits signed LE
-		StreamDataSource wavfile = new StreamDataSource(16000,2,16,false,true);
+		StreamDataSource wavfile = new StreamDataSource(16000,2,16,false,true); // big-endian, signed
 		wavfile.setInputStream(audio,"rawfile");
 		wavfile.initialize();
 

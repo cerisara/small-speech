@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SpeechAlign {
-	// text = space separated words
-	// TODO: il faut une grammaire et pas un texte ici
 	// text = suite de groupes de mots séparés par des espaces
-	// chaque groupe de mots = mots séparés par des virgules
+	// chaque groupe de mots = mots concurrents séparés par des virgules
 	public static void align(List data, String text) {
 		System.out.println("detjtrapp start building graph "+text);
 
@@ -44,13 +42,16 @@ public class SpeechAlign {
 			assert ci==rules[i].length-1;
 		}
 
-		System.out.println("detjtrapp nrule "+rules.length);
+		System.out.println("detjtrapp nrule "+rules.length+" "+rules[0].length);
 
 		StateGraph graph = new StateGraph(rules,toks,true);
 		graph.printGraph();
 
-		// do Viterbi	
-		// graph.viterbi(data, startFrame, endFrame);
-		// int[] timeline = graph.backtrack();
+		graph.viterbi(data, 0, data.size()-2);
+		System.out.println("detjtrapp viterbi forward done");
+		int[] timeline = graph.backtrack();
+		String s = "";
+		for (int i: timeline) s+=i+" ";
+		System.out.println("detjtrapp viterbi backward "+s);
 	}
 }
