@@ -91,10 +91,10 @@ public class JTransapp extends Activity {
 
 		// test grammatiseur
 		Grammatiseur gram = Grammatiseur.getGrammatiseur();
-		String g = gram.getGrammar("moins douze plus vingt deux");
-		System.out.println("detjtrapp phonetisation "+g);
+		//String g = gram.getGrammar("(un|deux|trois|quatre)");
+		//System.out.println("detjtrapp phonetisation "+g);
 
-		SpeechAlign.align(frames,"un deux trois");
+		SpeechAlign.align(frames,"trois,gateau");
 	}
 	public static void alert(final String s) {
 		main.runOnUiThread(new Runnable() {

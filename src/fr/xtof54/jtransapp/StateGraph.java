@@ -19,6 +19,7 @@ import java.util.Iterator;
 public class StateGraph {
 
 	// KISS: don't use swaping, just keep useful vars in these local vars:
+	// This variable is used during Viterbi
 	byte[][] bestInTrans;
 
 
@@ -105,6 +106,16 @@ public class StateGraph {
 	 * comment tokens) are assigned an index of -1 in this array.
 	 */
 	protected int[] wordBoundaries;
+
+	public void printGraph() {
+		int nnodes = nodeStates.length;
+		System.out.println("detjtrapp printgraph "+nnodes+" "+outNode.length);
+		for (int i=0;i<nnodes;i++) {
+			String suivs = "";
+			for (int j=0;j<outCount[i];j++) suivs+=outNode[i][j]+" ";
+			System.out.println("detjtrapp printgraph state "+i+" "+getPhoneAt(i)+" -> "+suivs);
+		}
+	}
 
 	/**
 	 * Tests two linear probabilities for equality.
