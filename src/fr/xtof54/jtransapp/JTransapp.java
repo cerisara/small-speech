@@ -12,16 +12,25 @@ import android.widget.Toast;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.widget.EditText;
+import android.text.InputType;
 
 import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.List;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import java.net.InetAddress;
 
 public class JTransapp extends Activity {
 	public Mike mike=null;
 	public static JTransapp main = null;
 	public File fdir=null;
 	private TextView txt = null;
+	public String ftpserver = null;
 
 	@Override
 	public void onCreate(Bundle s) {
@@ -55,6 +64,8 @@ public class JTransapp extends Activity {
 		refreshText();
 
 		checkAcmod();
+		String ss = PrefUtils.getFromPrefs(getApplicationContext(), "JTRAPPFTP", null);
+		if (ss!=null) ftpserver=ss;
 	}
 
 	public void mikeEnded() {
@@ -88,6 +99,59 @@ public class JTransapp extends Activity {
 	}
 	public void quitte(View v) {
 		System.exit(1);
+	}
+	public void settings(View v) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(main);
+		builder.setTitle("Settings");
+		final EditText inp = new EditText(main);
+		inp.setInputType(InputType.TYPE_CLASS_TEXT);
+		builder.setView(inp);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				ftpserver = inp.getText().toString();
+				PrefUtils.saveToPrefs(getApplicationContext(), "JTRAPPFTP", ftpserver);
+				dialog.cancel();
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		builder.show();
+	}
+
+	public void exportWAV(View v) {
+		if (ftpserver==null) {
+			alert("Enter FTP server name first");
+			return;
+		}
+		String PATH_NAME = JTransapp.main.fdir.getAbsolutePath(); //+"/recwav_"+startRecordTime+".raw";
+		File fd = new File(PATH_NAME);
+		File[] fs = fd.listFiles();
+		try {
+			for (File f: fs) {
+				if (f.getName().startsWith("recwav_")) {
+					System.out.println("JTRAPP upload "+f.getName());
+					FTPClient ftpc = new FTPClient();
+					ftpc.connect(InetAddress.getByName(ftpserver));
+					ftpc.enterLocalPassiveMode();
+					ftpc.login("anonymous","");
+					ftpc.changeWorkingDirectory("upload");
+					ftpc.setFileType(FTP.BINARY_FILE_TYPE);
+					BufferedInputStream ff = new BufferedInputStream(new FileInputStream(f));
+					ftpc.storeFile(f.getName(),ff);
+					ff.close();
+					ftpc.logout();
+					ftpc.disconnect();
+				}
+			}
+			System.out.println("JTRAPP all files uploaded");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public void mfcc(View v) {
 		mike.resetAudioSource();
@@ -190,7 +254,6 @@ public class JTransapp extends Activity {
 		if (f.exists())
 			System.out.println("detjtrapp found acmod");
 		else {
-
 			AlertDialog.Builder builder = new AlertDialog.Builder(main);
 			builder.setTitle("Downloader");
 			builder.setMessage("I need to download speech models (60 MB)...")

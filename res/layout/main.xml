@@ -28,6 +28,16 @@
 		android:layout_width="wrap_content"
 		android:text="Reco"
 		android:onClick="mfcc" />
+	<Button
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="export WAV"
+		android:onClick="exportWAV" />
+	<Button
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="settings"
+		android:onClick="settings" />
 </LinearLayout>
 
 	<Button
