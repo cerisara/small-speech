@@ -27,8 +27,8 @@ public class JTransapp extends Activity {
 	public void onCreate(Bundle s) {
 		super.onCreate(s);
 		main = this;
-		// fdir = getFilesDir();
 		fdir = getExternalFilesDir(null);
+		if (fdir==null) fdir = getFilesDir();
 		System.out.println("detjtrapp fdir "+fdir.getAbsolutePath());
 		mike = new Mike();
 		setContentView(R.layout.main);

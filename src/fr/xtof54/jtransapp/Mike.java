@@ -50,6 +50,8 @@ public class Mike extends InputStream {
 					AudioFormat.ENCODING_PCM_16BIT, bufsize);
 				if (record.getState() != AudioRecord.STATE_INITIALIZED) {
 					System.out.println("detjtrapp audio record cannot initialize");
+					JTransapp.alert("ERROR AUDIO");
+					JTransapp.main.mikeEnded(); // callback to update the GUI (should use a listener here)
 					return;
 				}
 				record.startRecording();
