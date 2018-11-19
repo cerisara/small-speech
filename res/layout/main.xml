@@ -38,6 +38,11 @@
 		android:layout_width="wrap_content"
 		android:text="settings"
 		android:onClick="settings" />
+	<Button
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="records"
+		android:onClick="audiofiles" />
 </LinearLayout>
 
 	<Button

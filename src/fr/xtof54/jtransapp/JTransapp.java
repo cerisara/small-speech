@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.widget.EditText;
+import android.widget.ArrayAdapter;
 import android.text.InputType;
 
 import java.io.File;
@@ -152,6 +153,39 @@ public class JTransapp extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void audiofiles(View v) {
+		if (fdir!=null) {
+			File[] fs = fdir.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String nom) {
+					return nom.startsWith("recwav_");
+				}	
+			});
+			if (fs!=null) {
+				final ArrayAdapter<String> aa = new ArrayAdapter<String>(main,R.layout.choiceinlist);
+				for (File ff: fs) aa.add(ff.getName());
+				System.out.println("DGSAPP fileslist "+fs.length);
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(main);
+				builder.setTitle("Audio Files");
+				builder.setCancelable(true)
+					.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.dismiss();
+						}
+					})
+				.setAdapter(aa, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						String chosenfile = aa.getItem(id);
+						alert("chosen file "+chosenfile);
+						Mike.playPCM(fdir+"/"+chosenfile);
+					}	
+				});
+				AlertDialog alertDialog = builder.create();
+				alertDialog.show();
+			}
+		}
+
 	}
 	public void mfcc(View v) {
 		mike.resetAudioSource();

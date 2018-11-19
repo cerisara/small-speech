@@ -14,6 +14,8 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
 import android.media.AudioRecord;
+import android.media.AudioTrack;
+import android.media.AudioManager;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
@@ -93,6 +95,31 @@ public class Mike extends InputStream {
 	public void stopRecord() {
 		contrec=false;
 	}
+
+	public static void playPCM(final String PATH_NAME) {
+		try {
+			ArrayList<Short> sbuf = new ArrayList<Short>();
+			DataInputStream fin = null;
+			try {
+				fin = new DataInputStream(new FileInputStream(PATH_NAME));
+				for (;;) sbuf.add(fin.readShort());
+			} catch (Exception e) {}
+			try {
+				if (fin!=null) fin.close();
+			} catch (Exception e) {}
+
+			short[] bb = new short[sbuf.size()];
+			for (int i=0;i<bb.length;i++) bb[i]=sbuf.get(i);
+
+			AudioTrack mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bb.length*2, AudioTrack.MODE_STATIC);
+			mAudioTrack.write(bb,0,bb.length);
+			mAudioTrack.play();
+			mAudioTrack.release();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	/*
 	public void getRawAudio() {
