@@ -1,3 +1,5 @@
+![](res/drawable-mdpi/jtr.png)
+
 # small-speech
 
 Quickly record and replay later audio notes.
