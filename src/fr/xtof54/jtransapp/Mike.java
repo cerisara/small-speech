@@ -58,9 +58,9 @@ public class Mike extends InputStream {
 				}
 				record.startRecording();
 				try {
-					System.out.println("detjtrapp start recording bufsize= "+wav.length);
 					startRecordTime = Calendar.getInstance().getTimeInMillis();
 					String PATH_NAME = JTransapp.main.fdir.getAbsolutePath()+"/recwav_"+startRecordTime+".raw";
+					System.out.println("detjtrapp start recording bufsize= "+wav.length+" "+PATH_NAME);
 					FileChannel fout = new FileOutputStream(PATH_NAME).getChannel();
 					ByteBuffer myByteBuffer = ByteBuffer.allocate(wav.length*2);
 					myByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -96,26 +96,55 @@ public class Mike extends InputStream {
 		contrec=false;
 	}
 
+	public static short byteArrayToShortBE(final byte[] bytes, final int offset) {
+		int r = ((bytes[offset+1] & 0xFF) << 8) + (bytes[offset] & 0xFF);
+		return (short)r;
+	}
+	public static short byteArrayToShortLE(final byte[] b, final int offset)
+	{
+		short value = 0;
+		for (int i = 0; i < 2; i++) value |= (b[i + offset] & 0x000000FF) << (i * 8);
+		return value;
+	}
+
 	public static void playPCM(final String PATH_NAME) {
 		try {
-			ArrayList<Short> sbuf = new ArrayList<Short>();
-			DataInputStream fin = null;
-			try {
-				fin = new DataInputStream(new FileInputStream(PATH_NAME));
-				for (;;) sbuf.add(fin.readShort());
-			} catch (Exception e) {}
-			try {
-				if (fin!=null) fin.close();
-			} catch (Exception e) {}
+			File inf = new File(PATH_NAME);
+			int nbytes = (int)inf.length();
+			byte[] buf = new byte[nbytes];
+			FileInputStream finf = new FileInputStream(inf);
+			int nread = finf.read(buf);
+			finf.close();
+			System.out.println("detjtrapp play "+buf.length+" "+PATH_NAME+" "+nread);
 
-			short[] bb = new short[sbuf.size()];
-			for (int i=0;i<bb.length;i++) bb[i]=sbuf.get(i);
+			final short[] bb = new short[nbytes/2];
+			int maxb = 0;
+			for (int i=0;i<bb.length;i++) {
+				// bb[i] = byteArrayToShortLE(buf, i+i);
+				bb[i] = byteArrayToShortBE(buf,i+i);
+				if (bb[i]>maxb) maxb=bb[i];
+				if (-bb[i]>maxb) maxb=-bb[i];
+			}
+			final float scalefact = 32000f/(float)maxb;
+			System.out.println("detjtrapp maxwav "+maxb+" "+scalefact);
+			for (int i=0;i<bb.length;i++) bb[i] = (short)((float)bb[i]*scalefact);
 
-			AudioTrack mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bb.length*2, AudioTrack.MODE_STATIC);
-			mAudioTrack.write(bb,0,bb.length);
-			mAudioTrack.play();
-			mAudioTrack.release();
+			Thread playth = new Thread(new Runnable() {
+				public void run() {
+					try {
+						AudioTrack mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 16000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bb.length*2, AudioTrack.MODE_STATIC);
+						mAudioTrack.write(bb,0,bb.length);
+						mAudioTrack.play();
+						// play is not blocking ! so we don't want to release audio just after...
+						// mAudioTrack.release();
+					} catch (Exception e) {
+						System.out.println("detjtrapp EXCEPTION while playing");
+						e.printStackTrace();
+					}
+				}});
+			playth.start();
 		} catch (Exception e) {
+			System.out.println("detjtrapp EXCEPTION playing");
 			e.printStackTrace();
 		}
 	}

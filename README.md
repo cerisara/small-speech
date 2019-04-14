@@ -12,4 +12,9 @@ It must allow anonymous uploads into the directory /upload/.
 
 All the audio files can be deleted on the Android device by pressing "clear".
 
+## Features
+
+- lightweight
+- no tracker, no pub, no dependence to google services, open source - totally safe for your privacy !
+- compatible old devices (from Android gingerbread)
 

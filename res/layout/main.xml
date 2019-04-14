@@ -11,38 +11,38 @@
 	<TextView
 		android:id="@+id/textid"
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:text="0" />
 	<Button
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:text="Quit"
 		android:onClick="quitte" />
 	<Button
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:text="Clear"
 		android:onClick="clear" />
 	<Button
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:text="Reco"
-		android:onClick="mfcc" />
-	<Button
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:text="export WAV"
 		android:onClick="exportWAV" />
 	<Button
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:text="settings"
 		android:onClick="settings" />
 	<Button
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:text="records"
+		android:layout_width="fill_parent"
+		android:text="replay"
 		android:onClick="audiofiles" />
+	<Button
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="delete"
+		android:onClick="delaudiofiles" />
 </LinearLayout>
 
 	<Button

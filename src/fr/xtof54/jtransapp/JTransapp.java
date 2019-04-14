@@ -32,6 +32,8 @@ public class JTransapp extends Activity {
 	public File fdir=null;
 	private TextView txt = null;
 	public String ftpserver = null;
+	private static final int PLAY_FILE = 0;
+	private static final int DEL_FILE = 1;
 
 	@Override
 	public void onCreate(Bundle s) {
@@ -85,6 +87,11 @@ public class JTransapp extends Activity {
 		}
 	}
 
+	public void delFile(String ff) {
+		File f = new File(ff);
+		if (f.isFile() && !f.delete()) System.out.println("detjtrapp cannot delete "+f.getAbsolutePath());
+		refreshText();
+	}
 	public void clear(View v) {
 		if (fdir!=null) {
 			File[] fs = fdir.listFiles(new FilenameFilter() {
@@ -155,6 +162,12 @@ public class JTransapp extends Activity {
 		}
 	}
 	public void audiofiles(View v) {
+		processFile(PLAY_FILE);
+	}
+	public void delaudiofiles(View v) {
+		processFile(DEL_FILE);
+	}
+	private void processFile(final int filemode) {
 		if (fdir!=null) {
 			File[] fs = fdir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String nom) {
@@ -167,7 +180,10 @@ public class JTransapp extends Activity {
 				System.out.println("DGSAPP fileslist "+fs.length);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(main);
-				builder.setTitle("Audio Files");
+				switch(filemode) {
+					case PLAY_FILE: builder.setTitle("Play Files"); break;
+					case DEL_FILE: builder.setTitle("Delete Files"); break;
+				}
 				builder.setCancelable(true)
 					.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
@@ -177,8 +193,15 @@ public class JTransapp extends Activity {
 				.setAdapter(aa, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						String chosenfile = aa.getItem(id);
-						alert("chosen file "+chosenfile);
-						Mike.playPCM(fdir+"/"+chosenfile);
+						// alert("chosen file "+chosenfile);
+						switch(filemode) {
+							case PLAY_FILE: 
+								Mike.playPCM(fdir+"/"+chosenfile);
+								break;
+							case DEL_FILE: 
+								delFile(fdir+"/"+chosenfile);
+								break;
+						}
 					}	
 				});
 				AlertDialog alertDialog = builder.create();
