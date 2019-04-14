@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.widget.EditText;
 import android.widget.ArrayAdapter;
 import android.text.InputType;
+import android.content.Context;
 
 import java.io.File;
 import java.io.BufferedInputStream;
@@ -167,9 +168,19 @@ public class JTransapp extends Activity {
 	public void delaudiofiles(View v) {
 		processFile(DEL_FILE);
 	}
+	private void setClipboard(Context context, String text) {
+		if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+			android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+			clipboard.setText(text);
+		} else {
+			android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+			android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
+			clipboard.setPrimaryClip(clip);
+		}
+	}
 	private void processFile(final int filemode) {
 		if (fdir!=null) {
-			File[] fs = fdir.listFiles(new FilenameFilter() {
+			final File[] fs = fdir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String nom) {
 					return nom.startsWith("recwav_");
 				}	
@@ -193,6 +204,7 @@ public class JTransapp extends Activity {
 				.setAdapter(aa, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						String chosenfile = aa.getItem(id);
+						setClipboard(getApplicationContext(),fs[id].toString());
 						// alert("chosen file "+chosenfile);
 						switch(filemode) {
 							case PLAY_FILE: 

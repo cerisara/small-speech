@@ -26,16 +26,6 @@
 	<Button
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
-		android:text="export WAV"
-		android:onClick="exportWAV" />
-	<Button
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:text="settings"
-		android:onClick="settings" />
-	<Button
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
 		android:text="replay"
 		android:onClick="audiofiles" />
 	<Button
