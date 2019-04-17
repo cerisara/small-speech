@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ArrayAdapter;
 import android.text.InputType;
 import android.content.Context;
+import android.os.Environment;
 
 import java.io.File;
 import java.io.BufferedInputStream;
@@ -133,6 +134,29 @@ public class JTransapp extends Activity {
 	}
 
 	public void exportWAV(View v) {
+		String PATH_NAME = JTransapp.main.fdir.getAbsolutePath(); //+"/recwav_"+startRecordTime+".raw";
+		try {
+			File sdcard = Environment.getExternalStorageDirectory();
+			if (sdcard==null) {
+				alert("Export needs an sdcard");
+			} else {
+				File fd = new File(PATH_NAME);
+				File[] fs = fd.listFiles();
+				for (File f: fs) {
+					if (f.getName().startsWith("recwav_")) {
+						String wavf = sdcard.getAbsolutePath()+"/"+f.getName().substring(0,f.getName().length()-4)+".wav";
+						System.out.println("detjtrapp towav "+f.getName()+" "+wavf);
+						Mike.rawToWave(f,new File(wavf));
+					}
+				}
+				System.out.println("detjtrapp all files towav");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public void exportFTP(View v) {
 		if (ftpserver==null) {
 			alert("Enter FTP server name first");
 			return;
