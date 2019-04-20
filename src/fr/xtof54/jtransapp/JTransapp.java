@@ -293,10 +293,15 @@ public class JTransapp extends Activity {
 		* right now, I prefer first to try and send the audio files to a desktop computer running JTrans:
 		*
 		*/
-		// opens a port, waiting for a dekstop JTrans app to connect
-		listenPort();
+
+		MulticastReceiver broadcastListener = new MulticastReceiver();
+		broadcastListener.start();
+
+
 		try {
 		/*
+			// opens a port, waiting for a dekstop JTrans app to connect
+			listenPort();
 			// now broadcasts my IP so that the desktop Jtrans app knows where to connect to
 			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
 			String locip = null;

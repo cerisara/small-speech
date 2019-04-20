@@ -6,7 +6,9 @@ import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.NetworkInterface;
 import java.io.DataInputStream;
+import java.util.Enumeration;
 
 public class Main {
 	public static final int mcport = 4536;
@@ -71,7 +73,28 @@ public class Main {
 		}
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws Exception {
+		Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+		String locip = null;
+		for (; n.hasMoreElements();)
+		{
+			NetworkInterface e = n.nextElement();
+			System.out.println("Interface: " + e.getName());
+			Enumeration<InetAddress> a = e.getInetAddresses();
+			for (; a.hasMoreElements();)
+			{
+				InetAddress addr = a.nextElement();
+				String ll = addr.getHostAddress();
+				if (ll.startsWith("192.168.1.")) {
+					locip=ll;
+					break;
+				}
+			}
+		}
+		System.out.println("locip "+locip);
+
+		sendMC("detjtrapp "+locip);
+		/*
 		MulticastReceiver rec = new MulticastReceiver();
 		rec.start();
 
@@ -82,6 +105,7 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 }
 
