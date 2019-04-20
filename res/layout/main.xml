@@ -38,6 +38,11 @@
 		android:layout_width="fill_parent"
 		android:text="export"
 		android:onClick="exportWAV" />
+	<Button
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="send2jtrans"
+		android:onClick="mfcc" />
 </LinearLayout>
 
 	<Button

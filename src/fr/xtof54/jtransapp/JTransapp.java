@@ -20,13 +20,21 @@ import android.os.Environment;
 
 import java.io.File;
 import java.io.BufferedInputStream;
+import java.io.DataOutputStream;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.List;
+import java.util.Enumeration;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.NetworkInterface;
+import java.net.DatagramSocket;
+import java.net.DatagramPacket;
 
 public class JTransapp extends Activity {
 	public Mike mike=null;
@@ -36,6 +44,9 @@ public class JTransapp extends Activity {
 	public String ftpserver = null;
 	private static final int PLAY_FILE = 0;
 	private static final int DEL_FILE = 1;
+
+	public static final int mcport = 4536;
+	public static final String mcip = "192.168.1.255";
 
 	@Override
 	public void onCreate(Bundle s) {
@@ -246,7 +257,27 @@ public class JTransapp extends Activity {
 		}
 
 	}
+
+	public static void sendMC(String s) {
+		try {
+			DatagramSocket socket = new DatagramSocket();
+			socket.setBroadcast(true);
+			byte[] buffer = s.getBytes();
+			InetAddress group = InetAddress.getByName(mcip);
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, mcport);
+			socket.send(packet);
+			socket.close();
+			System.out.println("detjtrapp sendMC OK");
+		} catch (Exception e) {
+			System.out.print("detjtrapp sendMC exception");
+			e.printStackTrace();
+		}
+	}
 	public void mfcc(View v) {
+		/*
+		 *
+		 * Old attempt: wanted to do speech recognition embedded
+		 *
 		mike.resetAudioSource();
 		List frames = MFCC.getMFCC(mike);
 		System.out.println("detjtrapp MFCC nframes= "+frames.size());
@@ -257,6 +288,98 @@ public class JTransapp extends Activity {
 		//System.out.println("detjtrapp phonetisation "+g);
 
 		SpeechAlign.align(frames,"trois,gateau");
+
+		* 
+		* right now, I prefer first to try and send the audio files to a desktop computer running JTrans:
+		*
+		*/
+		// opens a port, waiting for a dekstop JTrans app to connect
+		listenPort();
+		try {
+		/*
+			// now broadcasts my IP so that the desktop Jtrans app knows where to connect to
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			String locip = null;
+			for (; n.hasMoreElements();)
+			{
+				NetworkInterface e = n.nextElement();
+				System.out.println("Interface: " + e.getName());
+				Enumeration<InetAddress> a = e.getInetAddresses();
+				for (; a.hasMoreElements();)
+				{
+					InetAddress addr = a.nextElement();
+					String ll = addr.getHostAddress();
+					if (ll.startsWith("192.168.1.")) {
+						locip=ll;
+						break;
+					}
+				}
+			}
+			sendMC("detjtrapp "+locip);
+			// TODO: repeat sendMC until the server has connected to the listenPort()
+			
+
+			// debug
+			/*
+			Thread aaa = new Thread(new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(2000);
+						Socket tt = new Socket("192.168.1.6",4539);
+						System.out.println("detjtrapp debug "+tt);
+						Thread.sleep(3000);
+						tt.close();
+					} catch (Exception e) {
+						System.out.print("detjtrapp debug exception");
+						e.printStackTrace();
+					}
+				}});
+			aaa.start();
+			*/
+		} catch (Exception e) {
+			System.out.print("detjtrapp sendIP exception");
+			e.printStackTrace();
+		}
+	}
+	private void listenPort() {
+		Thread listenth = new Thread(new Runnable() {
+			public void run() {
+				try {
+					final int port = 4539;
+					ServerSocket serverSocket = new ServerSocket(port);
+					System.out.println("detjtrapp waiting for server app ");
+					Socket clientSocket = serverSocket.accept();
+					// a JTrans app connected !
+					System.out.println("detjtrapp got server app ");
+					DataOutputStream socketout = new DataOutputStream(clientSocket.getOutputStream());
+					// PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+					// BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					alert("uploading files...");
+
+					// now transfer files
+					if (fdir!=null) {
+						File[] fs = fdir.listFiles(new FilenameFilter() {
+							public boolean accept(File dir, String nom) {
+								return nom.startsWith("recwav_");
+							}	
+						});
+						for (File f: fs) {
+							socketout.writeUTF(f.getName());
+							// TODO send data
+							DataInputStream ff = new DataInputStream(new FileInputStream(f));
+							ff.close();
+						}
+						socketout.writeUTF("fini");
+						socketout.close();
+					}
+					socketout.close();
+
+				} catch (Exception e) {
+					System.out.print("detjtrapp listenPort exception");
+					e.printStackTrace();
+				}
+			}});
+		listenth.start();
 	}
 	public static void alert(final String s) {
 		main.runOnUiThread(new Runnable() {
