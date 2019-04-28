@@ -303,7 +303,8 @@ public class JTransapp extends Activity {
 
 		GUIlib.showTextInputDialog("Enter server IP with JTrans", "192.168.1.", new GUIlib.StringHandler() {
 			public void handleString(String s) {
-				alert(s);
+				alert("connecting to "+s);
+				MulticastReceiver.connectToJTrans(s);
 			}
 		}, main);
 

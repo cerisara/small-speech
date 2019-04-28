@@ -1,6 +1,5 @@
 package fr.xtof54.jtransapp;
 
-
 import java.net.MulticastSocket;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
@@ -8,11 +7,33 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.io.DataInputStream;
 
+/**
+ * I don't use it anymore as a Multicast or Broadcast, because both are not reliable on android,
+ * but rather as a standard network class to send data to the JTrans desktop app
+ */
 public class MulticastReceiver extends Thread {
 	public static final int mcport = 4536;
 	public static final String mcip = "230.0.0.0";
 	protected MulticastSocket socket = null;
 	protected byte[] buf = new byte[256];
+
+	public static void connectToJTrans(final String ip) {
+		Thread jtransconnecter = new Thread(new Runnable() {
+			public void run() {
+				try {
+					final int port = 4539;
+					System.out.println("detjtrapp connecting to "+ip+" "+port);
+					Socket so = new Socket(ip, port);
+					so.close();
+					JTransapp.main.alert("Finished transfer");
+				} catch (Exception e) {
+					e.printStackTrace();
+					JTransapp.main.alert("error connection");
+				}
+			}
+		});
+		jtransconnecter.start();
+	}
 
 	public void run() {
 		try {
