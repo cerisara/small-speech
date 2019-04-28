@@ -294,9 +294,18 @@ public class JTransapp extends Activity {
 		*
 		*/
 
+		/*
+		 * multicast and broadcast seem to work very unreliably... So I'll just popup a window asking for desktop IP
+		 
 		MulticastReceiver broadcastListener = new MulticastReceiver();
 		broadcastListener.start();
+		*/
 
+		GUIlib.showTextInputDialog("Enter server IP with JTrans", "192.168.1.", new GUIlib.StringHandler() {
+			public void handleString(String s) {
+				alert(s);
+			}
+		}, main);
 
 		try {
 		/*
