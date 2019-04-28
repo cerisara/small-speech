@@ -5,7 +5,10 @@ import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
 
 /**
  * I don't use it anymore as a Multicast or Broadcast, because both are not reliable on android,
@@ -24,7 +27,31 @@ public class MulticastReceiver extends Thread {
 					final int port = 4539;
 					System.out.println("detjtrapp connecting to "+ip+" "+port);
 					Socket so = new Socket(ip, port);
-					so.close();
+					DataOutputStream f = new DataOutputStream(so.getOutputStream());
+					// get list of files
+					if (JTransapp.main.fdir==null) {
+						JTransapp.main.alert("ERROR: no PATH to files found");
+						return;
+					}
+					final File[] fs = JTransapp.main.fdir.listFiles(new FilenameFilter() {
+						public boolean accept(File dir, String nom) {
+							return nom.startsWith("recwav_");
+						}	
+					});
+					f.writeInt(fs.length);
+					byte[] buf = new byte[1024];
+					for (int i=0;i<fs.length;i++) {
+						f.writeUTF(fs[i].getName());
+						FileInputStream g = new FileInputStream(fs[i]);
+						for (;;) {
+							int nread = g.read(buf);
+							f.writeInt(nread);
+							if (nread<=0) break;
+							f.write(buf,0,nread);
+						}
+						g.close();
+					}
+					f.close();
 					JTransapp.main.alert("Finished transfer");
 				} catch (Exception e) {
 					e.printStackTrace();
