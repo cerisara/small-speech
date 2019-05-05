@@ -117,8 +117,19 @@ public class JTransapp extends Activity {
 			}
 		}
 		refreshText();
-	}
-	public void quitte(View v) {
+        }
+        public void dlasr(View v) {
+            // test d'utilisation de tensorflow.js
+            Thread tjs = new Thread(new Runnable() {
+                public void run() {
+                    final String jscode="
+                        ";
+                    GUIlib.showWebview(jscode, main);
+                }
+            });
+            tjs.start();
+        }
+        public void quitte(View v) {
 		System.exit(1);
 	}
 	public void settings(View v) {

@@ -45,5 +45,31 @@ public class GUIlib {
 		AlertDialog alertDialog = builder.create();
 		alertDialog.show();
 	}
+	public static void showWebview(final String jscode, final Activity main) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(main);
+		LinearLayout layout = new LinearLayout(main);
+		layout.setOrientation(LinearLayout.VERTICAL);
+                final WebView wv = new WebView(main);
+                layout.add(wv);
+		layout.setPadding(50, 40, 50, 10);
+		builder.setView(layout);
+		builder.setCancelable(true)
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.dismiss();
+                                }
+                        });
+                builder.setPositiveButton("Run TF.js", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                wv.evaluteJavascript(jscode,null);
+                            }});
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+        }
 }
 
