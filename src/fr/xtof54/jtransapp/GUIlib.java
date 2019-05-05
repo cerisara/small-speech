@@ -5,6 +5,8 @@ import android.app.Activity; // inherits from Context
 import android.content.DialogInterface;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.webkit.WebView;
+import java.io.File;
 
 /**
  * This is my own generic class to perform app-independent GUI operations
@@ -45,12 +47,12 @@ public class GUIlib {
 		AlertDialog alertDialog = builder.create();
 		alertDialog.show();
 	}
-	public static void showWebview(final String jscode, final Activity main) {
+	public static void showWebview(final File jscode, final Activity main) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(main);
 		LinearLayout layout = new LinearLayout(main);
 		layout.setOrientation(LinearLayout.VERTICAL);
                 final WebView wv = new WebView(main);
-                layout.add(wv);
+                layout.addView(wv);
 		layout.setPadding(50, 40, 50, 10);
 		builder.setView(layout);
 		builder.setCancelable(true)
@@ -61,10 +63,7 @@ public class GUIlib {
                         });
                 builder.setPositiveButton("Run TF.js", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                wv.evaluteJavascript(jscode,null);
-                            }});
+                        wv.loadUrl("file://"+jscode.getAbsolutePath());
                     }
                 });
 

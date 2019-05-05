@@ -19,6 +19,11 @@ import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
@@ -120,14 +125,25 @@ public class JTransapp extends Activity {
         }
         public void dlasr(View v) {
             // test d'utilisation de tensorflow.js
-            Thread tjs = new Thread(new Runnable() {
-                public void run() {
-                    final String jscode="
-                        ";
-                    GUIlib.showWebview(jscode, main);
+            try {
+                InputStream f = main.getAssets().open("tfjs.html");
+                BufferedReader ff = new BufferedReader(new InputStreamReader(f));
+                File outputDir = main.getCacheDir();
+                File outputFile = File.createTempFile("tfjs", "html", outputDir);
+                PrintWriter g = new PrintWriter(new FileOutputStream(outputFile));
+                String s="";
+                for (;;) {
+                    String l = ff.readLine();
+                    if (l == null) break;
+                    g.print(l);
                 }
-            });
-            tjs.start();
+                g.close();
+                ff.close();
+                GUIlib.showWebview(outputFile, main);
+            } catch (Exception e) {
+                System.out.println("detjtrapp Exception webview");
+                e.printStackTrace();
+            }
         }
         public void quitte(View v) {
 		System.exit(1);
