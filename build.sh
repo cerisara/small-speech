@@ -4,7 +4,10 @@
 signerpass=$(cat jarsigner.password)
 
 export ANDBIN=/usr/lib/android-sdk/build-tools/debian/
+export ANDBIN=/home/xtof/softs/android-sdk-linux/build-tools/23.0.1/
+
 export ANDJAR=/usr/lib/android-sdk/platforms/android-23/android.jar
+export ANDJAR=/home/xtof/softs/android-sdk-linux/platforms/android-23/android.jar
 
 rm -rf out
 mkdir gen out
